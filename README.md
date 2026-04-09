@@ -1,9 +1,9 @@
 # WallEater —— 吞墙者
-在不使用传统代理的情况下绕过网络限制。适用于 Scoop、vcpkg 等的配方。
+- 在不使用传统代理的情况下绕过网络限制。适用于 Scoop、vcpkg 等的配方。
 ---
 
 ### [vcpkg](https://github.com/microsoft/vcpkg) 设置镜像
-路径：
+- 路径：
 ```
 ...\vcpkg\scripts\cmake\vcpkg_download_distfile.cmake 
 ```
