@@ -1,6 +1,5 @@
-# WallEater
-WallEater — Bypass network restrictions without traditional proxies. Recipes for Scoop, vcpkg, and more.
-WallEater — 在不使用传统代理的情况下绕过网络限制。适用于 Scoop、vcpkg 等的配方。
+# WallEater —— 吞墙者
+在不使用传统代理的情况下绕过网络限制。适用于 Scoop、vcpkg 等的配方。
 ---
 
 ### [vcpkg](https://github.com/microsoft/vcpkg) 设置镜像
