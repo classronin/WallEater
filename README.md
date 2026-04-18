@@ -25,7 +25,7 @@ function(vcpkg_download_distfile out_var)
         message(WARNING "SILENT_EXIT no longer has any effect. To resolve this warning, remove SILENT_EXIT.")
     endif()
 
-    # >>>>>>>>> 在这里添加镜像转换代码 <<<<<<<<<<<
+    # ========== 在这里添加镜像转换代码 ==========
     # 为所有 GitHub URL 添加镜像前缀
     set(mirror_prefix "https://gh-proxy.com/")
     set(converted_urls "")
@@ -40,13 +40,12 @@ function(vcpkg_download_distfile out_var)
         endif()
     endforeach()
     set(arg_URLS ${converted_urls})
-    # >>>>>>>>> 镜像转换代码结束 <<<<<<<<<<<
+    # ========== 镜像转换代码结束 ==========
 
 
     # Note that arg_ALWAYS_REDOWNLOAD implies arg_SKIP_SHA512, and NOT arg_SKIP_SHA512 implies NOT arg_ALWAYS_REDOWNLOAD
     if(arg_ALWAYS_REDOWNLOAD AND NOT arg_SKIP_SHA512)
         message(FATAL_ERROR "ALWAYS_REDOWNLOAD requires SKIP_SHA512")
-    endif()
 ```
 ---
 
@@ -99,6 +98,47 @@ function url($manifest, $arch) {
     # ==============================
 }
 ```
+---
+
+### Rust 编译下载加速
+- Rust 环境变量
+```
+配置文件默认路径
+%USERPROFILE%\.cargo\config.toml
+
+Cargo 包管理器
+CARGO_HOME=...\Rust\.cargo
+PATH=...\Rust\.cargo\bin
+
+rustup 工具链管理器
+RUSTUP_HOME=...\Rust\.rustup
+```
+
+- Rust 下载加速 配置文件 config.toml
+```
+[source.crates-io]
+replace-with = "tuna"
+
+[source.tuna]
+registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
+```
+>注：末尾 / 不可省，必须带 sparse+ 前缀。
+
+- 清理旧索引缓存后重试
+```
+rd /s /q %USERPROFILE%\.cargo\registry\index
+cargo build --release
+```
+
+- Rust 环境变量 示例：中科大镜像
+```
+RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+```
+
+
+
+
 ---
 
 ### [Aria2](https://github.com/aria2/aria2) 安装并启用激进
