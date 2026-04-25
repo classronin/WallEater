@@ -3,7 +3,7 @@
 ---
 
 ### [vcpkg](https://github.com/microsoft/vcpkg) 设置镜像
-- 路径：
+- vcpkg_download_distfile 走镜像，路径：
 ```
 ...\vcpkg\scripts\cmake\vcpkg_download_distfile.cmake 
 ```
