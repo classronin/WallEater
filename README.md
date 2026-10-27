@@ -65,37 +65,30 @@ function url($manifest, $arch) {
     $rawUrl = arch_specific 'url' $manifest $arch
     if (-not $rawUrl) { return $null }
 
-    # ========== 镜像加速 ==========
-    $mirror_prefix = "https://gh-proxy.com/"
-    $mirror_domains = @("github.com", "raw.githubusercontent.com", "objects.githubusercontent.com")
+    # ========== 镜像加速（域名 → 实际替换规则） ==========
+    $mirror_rules = @(
+        @{ re = "https?://(www\.)?github\.com/";             rep = "https://gh-proxy.com/https://github.com/" },
+        @{ re = "https?://raw\.githubusercontent\.com/";     rep = "https://gh-proxy.com/https://raw.githubusercontent.com/" },
+        @{ re = "https?://objects\.githubusercontent\.com/"; rep = "https://gh-proxy.com/https://objects.githubusercontent.com/" },
+        @{ re = "https?://storage\.googleapis\.com/flutter_infra_release/"; rep = "https://mirror.nju.edu.cn/flutter/flutter_infra_release/" }
+    )
 
-    # 处理数组或字符串
-    if ($rawUrl -is [Array]) {
-        $processedUrls = @()
-        foreach ($singleUrl in $rawUrl) {
-            $newUrl = $singleUrl
-            foreach ($domain in $mirror_domains) {
-                if ($singleUrl -match "https?://(www\.)?$domain/") {
-                    $newUrl = $mirror_prefix + $singleUrl
-                    Write-Host "镜像: $newUrl" -ForegroundColor Cyan
-                    break
-                }
-            }
-            $processedUrls += $newUrl
-        }
-        return $processedUrls
-    } else {
-        $newUrl = $rawUrl
-        foreach ($domain in $mirror_domains) {
-            if ($rawUrl -match "https?://(www\.)?$domain/") {
-                $newUrl = $mirror_prefix + $rawUrl
-                Write-Host "镜像: $newUrl" -ForegroundColor Cyan
+    $urls = @($rawUrl)
+    $result = @()
+    foreach ($u in $urls) {
+        $newU = $u
+        foreach ($r in $mirror_rules) {
+            if ($u -match $r.re) {
+                $newU = [regex]::Replace($u, $r.re, $r.rep)
+                Write-Host "镜像: $newU" -ForegroundColor Cyan
                 break
             }
         }
-        return $newUrl
+        $result += $newU
     }
-    # ==============================
+
+    if ($rawUrl -is [Array]) { return $result }
+    return $result[0]
 }
 ```
 ---
